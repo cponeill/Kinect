@@ -1,0 +1,37 @@
+// This code explores the closests points that the Kinect camera can read you. Pull this code, run it in processing, and see what the closest point on your body is to the Kinect. Pretty basic and pretty cool.
+
+import SimpleOpenNI.*;
+SimpleOpenNI context;
+
+int closestValue, closestX, closestY;
+
+void setup() {
+  size(640, 480);
+  context = new SimpleOpenNI(this);
+  context.enableDepth();
+}
+
+void draw() {
+  closestValue = 8000;
+  
+  context.update();
+  
+  int[] depthValues = context.depthMap();
+  for (int y = 0; y < 480; y++) {
+    for (int x = 0; x < 640; x++) {
+      int i = x + y * 640;
+      int currentDepthValue = depthValues[i];
+      
+      if (currentDepthValue > 0 && currentDepthValue < closestValue) {
+        closestValue = currentDepthValue;
+        closestX = x;
+        closestY = y;
+        
+      }
+    }
+  }
+  
+  image(context.depthImage(), 0, 0);
+  fill(255, 0, 0);
+  ellipse(closestX, closestY, 25, 25);
+}
